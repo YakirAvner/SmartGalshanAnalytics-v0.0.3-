@@ -55,18 +55,18 @@ class IP_DB_Copier:
                     if stat.S_ISDIR(date_folder.st_mode):
                         db_folder = f"{phone_source_folder}/{date_folder.filename}"
                         # Loops the date_folders
-                        for item in sftp.listdir_attr(date_folder):
+                        for item in sftp.listdir_attr(db_folder):
                             # Checks if the remote item (db_file) is a DIRECTORY!!! & and named "SQLite".
-                            if item.filename == "SQLite" and stat.S_ISDIR(item).st_mode:
+                            if item.filename == "SQLite" and stat.S_ISDIR(item.st_mode):
                                 SQLite_file = f"{db_folder}/{item.filename}"
                                 # Loops the SQLite folder.
-                                for Galshan_db in SQLite_file:
+                                for Galshan_db in sftp.listdir_attr(SQLite_file):
                                     # Checks if the files name is "Galshan.db".
-                                    if Galshan_db == "Galshan.db":
+                                    if Galshan_db.filename == "Galshan.db":
                                         remote_db = f"{SQLite_file}/{Galshan_db}"
-                                        local_db = os.path.join(local_dir, f"{date_folder.filename}_Galshan.db")
+                                        local_db = os.path.join(local_dir, f"{Galshan_db.filename}")
 
-                                        self.copy_folder(sftp, local_db, remote_db)
+                                        sftp.get(sftp, local_db, remote_db)
 
             except (pmk.SSHException, socket.timeout, TimeoutError, OSError) as e:
                 print(
