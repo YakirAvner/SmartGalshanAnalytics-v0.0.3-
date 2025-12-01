@@ -8,8 +8,8 @@
             "name": "--SG_IP",
             "type": "debugpy",
             "request": "launch",
-            "program": "C:\\Users\\user\\Desktop\\Yakir Avner\\SmartGalshanAnalytics(v0.0.2)\\SG-ExcelAnalytics\\main.py",
-            "cwd": "C:\\Users\\user\\Desktop\\Yakir Avner\\SmartGalshanAnalytics(v0.0.2)\\SG-ExcelAnalytics",
+            "program": "C:\\Users\\Yakir\\SmartGalshanAnalytics-v0.0.3-\\SG-Analytics\\main.py",
+            "cwd": "C:\\Users\\Yakir\\SmartGalshanAnalytics-v0.0.3-\\SG-Analytics",
             "console": "integratedTerminal",
             "args": [
                 "--device_IP", 
