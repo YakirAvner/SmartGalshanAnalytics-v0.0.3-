@@ -33,7 +33,7 @@ if __name__ == "__main__":
     dipl = list(devices.values())
     ipdc = ipdc(dnl, dipl)
     ipdc.connect_to_SGPhone()
-    connector = dbc()
+    # connector = dbc()
     # connector.load_databases()  # fills df and writes data.csv
     # connector.save_csv('data.csv')  # saves data.csv
     # connector.save_excel('data.xlsx')  # saves data.xlsx

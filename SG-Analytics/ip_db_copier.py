@@ -40,7 +40,6 @@ class IP_DB_Copier:
             username = "g188"
             password = "1470"
             phone_source_folder = r"/Documents"
-
             client = pmk.SSHClient()
             client.set_missing_host_key_policy(pmk.AutoAddPolicy())
 
@@ -49,7 +48,25 @@ class IP_DB_Copier:
                                username=username, password=password)
                 sftp = client.open_sftp()
                 local_dir = os.path.join(base_local_dir, phone_name)
-                self.copy_folder(sftp, local_dir, phone_source_folder)
+                
+                # Looping inside the dates of the file.  
+                for date_folder in sftp.listdir_attr(phone_source_folder):
+                    # Checks if the remote item (date_file) is a DIRECTORY!!!
+                    if stat.S_ISDIR(date_folder.st_mode):
+                        db_folder = f"{phone_source_folder}/{date_folder.filename}"
+                        # Loops the date_folders
+                        for item in sftp.listdir_attr(date_folder):
+                            # Checks if the remote item (db_file) is a DIRECTORY!!! & and named "SQLite".
+                            if item.filename == "SQLite" and stat.S_ISDIR(item).st_mode:
+                                SQLite_file = f"{db_folder}/{item.filename}"
+                                # Loops the SQLite folder.
+                                for Galshan_db in SQLite_file:
+                                    # Checks if the files name is "Galshan.db".
+                                    if Galshan_db == "Galshan.db":
+                                        remote_db = f"{SQLite_file}/{Galshan_db}"
+                                        local_db = os.path.join(local_dir, f"{date_folder.filename}_Galshan.db")
+
+                                        self.copy_folder(sftp, local_db, remote_db)
 
             except (pmk.SSHException, socket.timeout, TimeoutError, OSError) as e:
                 print(
