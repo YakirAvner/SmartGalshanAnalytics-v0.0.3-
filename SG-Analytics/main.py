@@ -28,7 +28,6 @@ def connect_to_devices(devices):
 # If the program is running in the main file, then:
 if __name__ == "__main__":
     devices = parse_device()
-    connect_to_devices(devices)
     dnl = list(devices.keys())
     dipl = list(devices.values())
     ipdc = ipdc(dnl, dipl)

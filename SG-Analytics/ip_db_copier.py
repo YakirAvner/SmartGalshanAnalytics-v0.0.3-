@@ -3,6 +3,7 @@ import paramiko as pmk
 import posixpath
 import socket
 import stat
+from threading import Thread
 
 
 class IP_DB_Copier:
@@ -24,10 +25,18 @@ class IP_DB_Copier:
                     print(f"Copied {remote_item} to {local_item}")
                 else:
                     print(
-                        f"The {local_item} is already copied in the local directory")
+                         f"The {local_item} is already copied in the local directory")
+    
+    def copy_and_check_db(self, sftp, local_db, remote_db):
+        if os.path.exists(local_db):
+            print(f"The {local_db} is already copied in the {os.path.dirname(local_db)} from the {remote_db} db.")
+        else:
+            print(f"The {local_db} isn't copied in the {os.path.dirname(local_db)} from the {remote_db} db. \nCopying {remote_db} to {local_db}: ")
+            sftp.get(remote_db, local_db)    
 
     def connect_to_SGPhone(self):
-        base_local_dir = r"C:\\Users\\user\Desktop\\Yakir Avner\\SG_Devices"
+        base_local_dir = r"C:\Users\Yakir\SG_Devices" 
+        os.makedirs(base_local_dir, exist_ok=True)
         for phone_name, ip in zip(self.device_name_list, self.device_ip_list):
             # Connecting to each DB in the list.
             # Define the database connector from the given IP
@@ -37,6 +46,7 @@ class IP_DB_Copier:
             except ValueError:
                 print(f"Invalid IP format: {ip}")
                 continue
+            print(f"Connecting to device {phone_name} at IP {ip}")
             username = "g188"
             password = "1470"
             phone_source_folder = r"/Documents"
@@ -48,6 +58,7 @@ class IP_DB_Copier:
                                username=username, password=password)
                 sftp = client.open_sftp()
                 local_dir = os.path.join(base_local_dir, phone_name)
+                os.makedirs(local_dir, exist_ok=True)
                 
                 # Looping inside the dates of the file.  
                 for date_folder in sftp.listdir_attr(phone_source_folder):
@@ -63,11 +74,11 @@ class IP_DB_Copier:
                                 for Galshan_db in sftp.listdir_attr(SQLite_file):
                                     # Checks if the files name is "Galshan.db".
                                     if Galshan_db.filename == "Galshan.db":
-                                        remote_db = f"{SQLite_file}/{Galshan_db}"
-                                        local_db = os.path.join(local_dir, f"{Galshan_db.filename}")
+                                        remote_db = f"{SQLite_file}/{Galshan_db.filename}"
+                                        local_db = os.path.join(local_dir, f"{date_folder.filename}_{Galshan_db.filename}")
 
-                                        sftp.get(sftp, local_db, remote_db)
+                                        #sftp.get(remote_db, local_db)
+                                        self.copy_and_check_db(sftp, local_db, remote_db)
 
             except (pmk.SSHException, socket.timeout, TimeoutError, OSError) as e:
-                print(
-                    f"Failed to connect to device at IP: {hostname} with an {e} error")
+                print(f"Failed to connect to device at IP: {hostname} with an {e} error")
