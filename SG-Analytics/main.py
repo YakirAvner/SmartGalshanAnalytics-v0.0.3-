@@ -19,12 +19,6 @@ def parse_device():
         devices[name] = ip
     return devices
 
-
-def connect_to_devices(devices):
-    for name, ip in devices.items():
-        print(f"Connecting to device {name} at IP {ip}")
-
-
 # If the program is running in the main file, then:
 if __name__ == "__main__":
     devices = parse_device()
